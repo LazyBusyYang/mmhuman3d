@@ -15,6 +15,8 @@ dump_path = 'tests/data/camera/' +\
 
 
 def test_set_from_mat():
+    a = 3
+    print(a * 3)
     empty_para = CameraParameter(name='test_set')
     mat_3x3 = np.eye(3)
     mat_4x4 = np.eye(4)
