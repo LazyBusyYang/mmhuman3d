@@ -46,6 +46,43 @@ class HumanDataCacheReader():
         ret_human_data.__set_default_values__()
         return ret_human_data
 
+    def get_multi_items(self, indice, required_keys: List[str] = []):
+        if self.npz_file is None:
+            self.npz_file = np.load(self.npz_path, allow_pickle=True)
+        if isinstance(indice, int):
+            indice = [
+                indice,
+            ]
+        slices_in_mem = {}
+        base_data = None
+        for index in indice:
+            cache_key = str(int(index / self.slice_size))
+            if cache_key in slices_in_mem:
+                slice_data = slices_in_mem[cache_key]
+            else:
+                slice_data = dict(self.npz_file[cache_key].item())
+                slices_in_mem[cache_key] = slice_data
+            tmp_data = HumanData(slice_data)[index % self.slice_size]
+            if base_data is None:
+                base_data = tmp_data
+            else:
+                base_data = HumanData.concatenate(base_data, tmp_data)
+        base_data.update(self.keypoints_info)
+        for key in required_keys:
+            non_sliced_value = self.get_non_sliced_data(key)
+            if isinstance(non_sliced_value, dict) and\
+                    key in base_data and\
+                    isinstance(base_data[key], dict):
+                base_data[key].update(non_sliced_value)
+            else:
+                base_data[key] = non_sliced_value
+        ret_human_data = base_data
+        # data in cache is compressed
+        ret_human_data.__keypoints_compressed__ = True
+        # set missing values and attributes by default method
+        ret_human_data.__set_default_values__()
+        return ret_human_data
+
     def get_non_sliced_data(self, key: str):
         if self.non_sliced_data is None:
             if self.npz_file is None:
