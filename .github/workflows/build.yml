@@ -4,7 +4,6 @@
 name: build
 
 on: push
-      - 'docs_zh-CN/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
