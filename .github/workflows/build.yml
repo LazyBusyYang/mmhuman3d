@@ -20,9 +20,6 @@ jobs:
       volumes:
         - /workflow/mmhuman3d_container:/home/runner/work/mmhuman3d/mmhuman3d
     steps:
-      - name: Go to repo dir
-        run: |
-          cd /workflow/mmhuman3d_container
       - name: Show path
         run: |
           pwd
@@ -33,6 +30,9 @@ jobs:
       - name: Show ls again
         run: |
           ls
+      - name: Show conda env
+        run: |
+          conda info -e
       - name: Prepare test data
         run: |
           sh scripts/download_test_data.sh
