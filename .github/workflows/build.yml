@@ -13,6 +13,7 @@ jobs:
   build_cuda102:
     runs-on: ubuntu-18.04
     steps:
+      - uses: actions/checkout@v2
       - name: Show path
         run: |
           pwd
