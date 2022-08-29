@@ -12,14 +12,44 @@ concurrency:
 jobs:
   build_cuda102:
     runs-on: ubuntu-18.04
+    container:
+      image: openxrlab/xrmocap_runtime:ubuntu1804_x64_cu102_py38_torch181_mmcv153
+      credentials:
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_PWD}}
+      volumes:
+        - /workflow/mmhuman3d_container:/home/runner/work/mmhuman3d/mmhuman3d
     steps:
-      - uses: actions/checkout@v2
+      - name: Go to repo dir
+        run: |
+          cd /workflow/mmhuman3d_containe
       - name: Show path
         run: |
           pwd
       - name: Show ls
         run: |
           ls
+      - uses: actions/checkout@v2
+      - name: Show ls again
+        run: |
+          ls
       - name: Prepare test data
         run: |
           sh scripts/download_test_data.sh
+      - name: Build and install
+        run: |
+          rm -rf xrmocap.egg-info
+          pip install -e .
+      - name: Run unittests and generate coverage report
+        run: |
+          coverage run --source xrmocap -m pytest tests/
+          coverage xml
+          coverage report -m
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage.xml
+          flags: unittests
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: false
