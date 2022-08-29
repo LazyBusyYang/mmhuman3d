@@ -32,7 +32,9 @@ jobs:
           ls
       - name: Show conda env
         run: |
+          source /root/.bashrc
           conda info -e
+          conda activate openxrlab
       - name: Prepare test data
         run: |
           sh scripts/download_test_data.sh
