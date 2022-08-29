@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Go to repo dir
         run: |
-          cd /workflow/mmhuman3d_containe
+          cd /workflow/mmhuman3d_container
       - name: Show path
         run: |
           pwd
