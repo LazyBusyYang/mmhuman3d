@@ -23,20 +23,20 @@ jobs:
       - name: Show path
         run: |
           pwd
-      - name: Show ls
-        run: |
-          ls
       - uses: actions/checkout@v2
-      - name: Show ls again
+      - name: Show bashrc
         run: |
-          ls
-      - name: Show conda env
-        run: |
-          ls /root
+          ls /root -a
           cat /root/.bashrc
-          . /root/.bashrc
+      - name: Source conda
+        run: |
+          source /root/miniconda3/etc/profile.d/conda.sh
+          conda deactivate
           conda info -e
           conda activate openxrlab
+      - name: Source bashrc
+        run: |
+          source /root/.bashrc
       - name: Prepare test data
         run: |
           sh scripts/download_test_data.sh
